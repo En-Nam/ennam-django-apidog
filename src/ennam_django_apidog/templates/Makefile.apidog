@@ -1,0 +1,96 @@
+# APIDOG Integration Makefile
+# Usage: make -f Makefile.apidog [command]
+#
+# All commands use the Django management command:
+#   python manage.py apidog <subcommand>
+#
+# Install: pip install ennam-django-apidog
+
+.PHONY: help
+help: ## Show this help message
+	@echo "APIDOG Integration Commands:"
+	@echo ""
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "Environment variables:"
+	@echo "  APIDOG_PROJECT_ID  - Your APIDOG project ID"
+	@echo "  APIDOG_TOKEN       - Your APIDOG API token"
+
+.PHONY: export
+export: ## Export OpenAPI schema from Django
+	python manage.py apidog export --format json
+	@echo "Schema exported to apidog/"
+
+.PHONY: export-yaml
+export-yaml: ## Export OpenAPI schema in YAML format
+	python manage.py apidog export --format yaml
+	@echo "YAML schema exported to apidog/"
+
+.PHONY: validate
+validate: ## Validate the latest exported schema
+	python manage.py apidog validate
+	@echo "Schema validation complete"
+
+.PHONY: push
+push: ## Push local schema to APIDOG Cloud
+	python manage.py apidog push
+	@echo "Schema pushed to APIDOG"
+
+.PHONY: pull
+pull: ## Pull schema from APIDOG Cloud
+	python manage.py apidog pull
+	@echo "Schema pulled from APIDOG"
+
+.PHONY: compare
+compare: ## Compare local schema with APIDOG Cloud
+	python manage.py apidog compare
+
+.PHONY: env-config
+env-config: ## Generate environment configuration
+	python manage.py apidog env-config
+	@echo "Environment config generated"
+
+.PHONY: sync
+sync: export push ## Export and push schema to APIDOG Cloud
+	@echo "Schema synced to APIDOG"
+
+.PHONY: check-env
+check-env: ## Check required environment variables
+	@echo "Checking environment variables..."
+	@if [ -z "$(APIDOG_PROJECT_ID)" ]; then \
+		echo "APIDOG_PROJECT_ID is not set"; \
+	else \
+		echo "APIDOG_PROJECT_ID is set"; \
+	fi
+	@if [ -z "$(APIDOG_TOKEN)" ]; then \
+		echo "APIDOG_TOKEN is not set"; \
+	else \
+		echo "APIDOG_TOKEN is set"; \
+	fi
+
+.PHONY: clean
+clean: ## Clean generated schema files
+	rm -f apidog/openapi_schema_*.json
+	rm -f apidog/openapi_schema_*.yaml
+	rm -f apidog/openapi_from_apidog_*.json
+	rm -f apidog/apidog_environments.json
+	@echo "Cleaned generated files"
+
+.PHONY: setup
+setup: env-config export ## Initial setup: generate env config and export schema
+	@echo ""
+	@echo "APIDOG setup complete!"
+	@echo ""
+	@echo "Next steps:"
+	@echo "1. Configure APIDOG_SETTINGS in settings.py:"
+	@echo "   APIDOG_SETTINGS = {"
+	@echo "       'PROJECT_ID': 'your-project-id',"
+	@echo "       'TOKEN': 'your-api-token',"
+	@echo "   }"
+	@echo ""
+	@echo "2. Or set environment variables:"
+	@echo "   export APIDOG_PROJECT_ID=your-project-id"
+	@echo "   export APIDOG_TOKEN=your-api-token"
+	@echo ""
+	@echo "3. Push schema to APIDOG:"
+	@echo "   make -f Makefile.apidog push"

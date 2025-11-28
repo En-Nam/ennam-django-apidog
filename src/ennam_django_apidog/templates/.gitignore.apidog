@@ -1,0 +1,5 @@
+# APIDOG generated files (keep environments.json, ignore generated schemas)
+apidog/openapi_schema_*.json
+apidog/openapi_schema_*.yaml
+apidog/openapi_from_apidog_*.json
+apidog/apidog_environments.json
