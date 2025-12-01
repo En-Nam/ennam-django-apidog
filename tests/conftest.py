@@ -18,8 +18,10 @@ def setup_django() -> None:
 
 
 def pytest_configure(config: object) -> None:
-    """Configure pytest without triggering django fixtures for non-django tests."""
+    """Configure pytest and setup Django."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
+    if not settings.configured:
+        django.setup()
 
 
 @pytest.fixture
