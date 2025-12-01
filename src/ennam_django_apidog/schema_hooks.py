@@ -22,7 +22,7 @@ from typing import Any, Dict, List, Optional, Tuple, cast
 from drf_spectacular.extensions import OpenApiSerializerExtension
 
 
-class BaseSerializerExtension(OpenApiSerializerExtension):
+class BaseSerializerExtension(OpenApiSerializerExtension):  # type: ignore[no-untyped-call]
     """
     Extension to handle serializers that inherit from BaseSerializer
     without defining fields (custom to_representation only).
