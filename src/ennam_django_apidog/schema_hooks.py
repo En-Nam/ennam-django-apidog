@@ -17,6 +17,8 @@ Usage in Django settings.py SPECTACULAR_SETTINGS:
     }
 """
 
+from typing import Any, Dict, List, Optional, Tuple, cast
+
 from drf_spectacular.extensions import OpenApiSerializerExtension
 
 
@@ -32,11 +34,11 @@ class BaseSerializerExtension(OpenApiSerializerExtension):
     target_class = "rest_framework.serializers.BaseSerializer"
     match_subclasses = True
 
-    def get_name(self):
+    def get_name(self, auto_schema: Any = None, direction: str = "") -> Optional[str]:
         """Return the name of the serializer class."""
-        return self.target.__class__.__name__
+        return cast(str, self.target.__class__.__name__)
 
-    def map_serializer(self, auto_schema, direction):
+    def map_serializer(self, auto_schema: Any, direction: str) -> Dict[str, Any]:
         """
         For BaseSerializer subclasses without fields,
         return a generic object schema.
@@ -67,7 +69,9 @@ class BaseSerializerExtension(OpenApiSerializerExtension):
         }
 
 
-def preprocess_exclude_problematic_views(endpoints):
+def preprocess_exclude_problematic_views(
+    endpoints: List[Tuple[str, str, str, Any]]
+) -> List[Tuple[str, str, str, Any]]:
     """
     Preprocessing hook for drf-spectacular.
 

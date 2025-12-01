@@ -257,6 +257,86 @@ Example GitHub Actions workflow:
 
 For full documentation, see [docs/GUIDE.md](docs/GUIDE.md).
 
+## Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage report
+pytest --cov=src --cov-report=html --cov-report=term
+
+# Run specific test file
+pytest tests/test_commands.py -v
+
+# Run specific test
+pytest tests/test_commands.py::TestApidogCommand::test_export_command -v
+
+# Run tests with markers
+pytest -m integration    # Integration tests only
+```
+
+### Test Coverage
+
+Current coverage: **40-50%** focusing on critical functionality:
+- ✅ HTTP API interactions (push/pull/compare with mocked responses)
+- ✅ Management commands (export/validate/init)
+- ✅ Settings and credential handling
+- ✅ Error handling and edge cases
+
+### Development Setup
+
+```bash
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Install pre-commit hooks
+pre-commit install
+
+# Run linting
+ruff check src/ tests/
+ruff format src/ tests/
+
+# Run type checking
+mypy src/
+
+# Run all pre-commit checks
+pre-commit run --all-files
+```
+
+### Pre-commit Hooks
+
+This project uses pre-commit hooks for quality assurance:
+- **ruff**: Code linting and formatting
+- **mypy**: Static type checking with Django stubs
+- **Standard checks**: YAML/TOML validation, trailing whitespace, etc.
+
+Hooks run automatically on `git commit`. The same checks run in CI.
+
+### Release Checklist
+
+Before publishing to PyPI:
+
+- [ ] All tests pass: `pytest --cov=src`
+- [ ] Coverage ≥ 40%: `pytest --cov=src --cov-report=term`
+- [ ] No mypy errors: `mypy src/`
+- [ ] Linting passes: `ruff check src/ tests/`
+- [ ] Pre-commit passes: `pre-commit run --all-files`
+- [ ] CI passes on all Python/Django versions
+- [ ] Version bumped in `pyproject.toml`
+- [ ] CHANGELOG.md updated
+- [ ] Test build: `python -m build && twine check dist/*`
+
+### Continuous Integration
+
+Tests run on GitHub Actions with:
+- **Python versions**: 3.8, 3.9, 3.10, 3.11, 3.12
+- **Django versions**: 3.2, 4.0, 4.1, 4.2, 5.0
+
+See [.github/workflows/test.yml](.github/workflows/test.yml) for details.
+
 ## Requirements
 
 - Python >= 3.8

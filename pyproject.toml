@@ -51,8 +51,14 @@ dev = [
     "pytest>=7.0",
     "pytest-django>=4.5",
     "pytest-cov>=4.0",
+    "responses>=0.24.0",
+    "pre-commit>=3.5.0",
     "ruff>=0.1.0",
     "mypy>=1.0",
+    "django-stubs>=4.2.6",
+    "djangorestframework-stubs>=3.14.0",
+    "types-requests>=2.31.0",
+    "types-PyYAML>=6.0.0",
     "build>=1.0",
     "twine>=4.0",
 ]
@@ -93,6 +99,23 @@ testpaths = ["tests"]
 python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true
+no_implicit_optional = true
+strict_optional = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+
+[[tool.mypy.overrides]]
+module = "ennam_django_apidog.*"
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.django-stubs]
+django_settings_module = "tests.settings"
 
 [tool.coverage.run]
 source = ["src"]

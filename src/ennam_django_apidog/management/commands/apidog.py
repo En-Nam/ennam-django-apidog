@@ -22,6 +22,7 @@ import os
 import shutil
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, Optional
 
 import requests
 import yaml
@@ -34,21 +35,21 @@ from ennam_django_apidog.settings import apidog_settings
 class Command(BaseCommand):
     help = "APIDOG integration - Export, sync, and compare OpenAPI schemas"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.client = Client()
 
     @property
-    def output_dir(self):
+    def output_dir(self) -> str:
         """Get the output directory from settings."""
         return apidog_settings.get_output_dir()
 
     @property
-    def templates_dir(self):
+    def templates_dir(self) -> Path:
         """Get the templates directory within the package."""
         return Path(__file__).parent.parent.parent / "templates"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: Any) -> None:
         subparsers = parser.add_subparsers(
             dest="subcommand",
             title="subcommands",
@@ -181,7 +182,7 @@ class Command(BaseCommand):
             help="Generate environment configuration",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         subcommand = options.get("subcommand")
 
         # Ensure output directory exists
@@ -189,19 +190,19 @@ class Command(BaseCommand):
             os.makedirs(self.output_dir)
 
         if subcommand == "init":
-            return self.handle_init(options)
+            self.handle_init(options)
         elif subcommand == "export":
-            return self.handle_export(options)
+            self.handle_export(options)
         elif subcommand == "validate":
-            return self.handle_validate(options)
+            self.handle_validate(options)
         elif subcommand == "push":
-            return self.handle_push(options)
+            self.handle_push(options)
         elif subcommand == "pull":
-            return self.handle_pull(options)
+            self.handle_pull(options)
         elif subcommand == "compare":
-            return self.handle_compare(options)
+            self.handle_compare(options)
         elif subcommand == "env-config":
-            return self.handle_env_config(options)
+            self.handle_env_config(options)
         else:
             # No subcommand - show help
             self.print_help("manage.py", "apidog")
@@ -209,7 +210,7 @@ class Command(BaseCommand):
     # =========================================================================
     # Init Command
     # =========================================================================
-    def handle_init(self, options):
+    def handle_init(self, options: Dict[str, Any]) -> None:
         """Initialize apidog directory with templates."""
         force = options.get("force", False)
 
@@ -268,7 +269,7 @@ class Command(BaseCommand):
         self.stdout.write("  2. Run: python manage.py apidog export")
         self.stdout.write("  3. Run: python manage.py apidog push")
 
-    def _append_gitignore(self, template_path, gitignore_path):
+    def _append_gitignore(self, template_path: Path, gitignore_path: str) -> None:
         """Append APIDOG gitignore rules to existing .gitignore."""
         marker = "# APIDOG generated files"
         rules = template_path.read_text()
@@ -286,7 +287,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS("  Updated: .gitignore"))
 
-    def _create_apidog_readme(self, path):
+    def _create_apidog_readme(self, path: str) -> None:
         """Create a README for the apidog directory."""
         content = """# APIDOG Integration
 
@@ -329,7 +330,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
     # =========================================================================
     # Export Command
     # =========================================================================
-    def handle_export(self, options):
+    def handle_export(self, options: Dict[str, Any]) -> str:
         """Export OpenAPI schema from Django."""
         fmt = options.get("format", "json")
         output_dir = options.get("output") or self.output_dir
@@ -374,7 +375,9 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
 
         return filepath
 
-    def _write_schema(self, filepath, schema, fmt, indent=2):
+    def _write_schema(
+        self, filepath: str, schema: Dict[str, Any], fmt: str, indent: int = 2
+    ) -> None:
         """Write schema to file in specified format."""
         with open(filepath, "w", encoding="utf-8") as f:
             if fmt == "json":
@@ -382,7 +385,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
             else:
                 yaml.dump(schema, f, default_flow_style=False, allow_unicode=True)
 
-    def _print_schema_stats(self, schema):
+    def _print_schema_stats(self, schema: Dict[str, Any]) -> None:
         """Print schema statistics."""
         self.stdout.write("\nSchema Statistics:")
         self.stdout.write(f'  API Version: {schema.get("info", {}).get("version", "N/A")}')
@@ -394,7 +397,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
     # =========================================================================
     # Validate Command
     # =========================================================================
-    def handle_validate(self, options):
+    def handle_validate(self, options: Dict[str, Any]) -> bool:
         """Validate an OpenAPI schema file."""
         schema_file = options.get("file")
 
@@ -406,7 +409,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
 
         self.stdout.write(f"Validating: {schema_file}")
 
-        with open(schema_file, "r", encoding="utf-8") as f:
+        with open(schema_file, encoding="utf-8") as f:
             schema = json.load(f)
 
         # Basic validation
@@ -423,7 +426,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
     # =========================================================================
     # Push Command
     # =========================================================================
-    def handle_push(self, options):
+    def handle_push(self, options: Dict[str, Any]) -> bool:
         """Push local schema to APIDOG Cloud."""
         project_id, token = apidog_settings.get_credentials(
             options.get("project_id"),
@@ -444,7 +447,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
 
         self.stdout.write(f"Pushing to APIDOG project {project_id}...")
 
-        with open(schema_file, "r", encoding="utf-8") as f:
+        with open(schema_file, encoding="utf-8") as f:
             schema_content = f.read()
 
         headers = {
@@ -477,12 +480,12 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
                 self.stdout.write(response.text[:500])
                 return False
         except requests.exceptions.RequestException as e:
-            raise CommandError(f"Request failed: {e}")
+            raise CommandError(f"Request failed: {e}") from e
 
     # =========================================================================
     # Pull Command
     # =========================================================================
-    def handle_pull(self, options):
+    def handle_pull(self, options: Dict[str, Any]) -> Optional[str]:
         """Pull schema from APIDOG Cloud."""
         project_id, token = apidog_settings.get_credentials(
             options.get("project_id"),
@@ -545,12 +548,12 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
                 )
 
         except requests.exceptions.RequestException as e:
-            raise CommandError(f"Request failed: {e}")
+            raise CommandError(f"Request failed: {e}") from e
 
     # =========================================================================
     # Compare Command
     # =========================================================================
-    def handle_compare(self, options):
+    def handle_compare(self, options: Dict[str, Any]) -> Dict[str, Any]:
         """Compare local schema with APIDOG Cloud."""
         project_id, token = apidog_settings.get_credentials(
             options.get("project_id"),
@@ -571,9 +574,12 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
         cloud_file = self.handle_pull({"project_id": project_id, "token": token})
 
         # Load both schemas
-        with open(local_file, "r", encoding="utf-8") as f:
+        if cloud_file is None:
+            raise CommandError("Failed to pull schema from cloud")
+
+        with open(local_file, encoding="utf-8") as f:
             local_schema = json.load(f)
-        with open(cloud_file, "r", encoding="utf-8") as f:
+        with open(cloud_file, encoding="utf-8") as f:
             cloud_schema = json.load(f)
 
         # Compare endpoints
@@ -625,7 +631,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
     # =========================================================================
     # Env-Config Command
     # =========================================================================
-    def handle_env_config(self, options):
+    def handle_env_config(self, options: Dict[str, Any]) -> str:
         """Generate environment configuration."""
         self.stdout.write("Generating environment configuration...")
 
@@ -641,7 +647,7 @@ See the full documentation at: https://github.com/ennam/ennam-django-apidog
     # =========================================================================
     # Helpers
     # =========================================================================
-    def _print_credentials_help(self):
+    def _print_credentials_help(self) -> None:
         """Print help for APIDOG credentials."""
         self.stdout.write(self.style.WARNING("\nAPIDAG credentials required:"))
         self.stdout.write("  Option 1 - Django settings.py:")

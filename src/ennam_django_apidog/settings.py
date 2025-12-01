@@ -18,8 +18,9 @@ Usage in Django settings.py:
 """
 
 import os
-from django.conf import settings
+from typing import Any, Dict, Optional, Tuple, cast
 
+from django.conf import settings
 
 DEFAULTS = {
     # Output configuration
@@ -73,18 +74,18 @@ class ApidogSettings:
         output_dir = apidog_settings.OUTPUT_DIR
     """
 
-    def __init__(self):
-        self.defaults = DEFAULTS
-        self._cached_attrs = set()
+    def __init__(self) -> None:
+        self.defaults: Dict[str, Any] = DEFAULTS
+        self._cached_attrs: set[str] = set()
 
     @property
-    def user_settings(self):
+    def user_settings(self) -> Dict[str, Any]:
         """Get user-defined settings from Django settings."""
         if not hasattr(self, "_user_settings"):
             self._user_settings = getattr(settings, "APIDOG_SETTINGS", {})
         return self._user_settings
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         if attr not in self.defaults:
             raise AttributeError(f"Invalid APIDOG setting: '{attr}'")
 
@@ -107,7 +108,7 @@ class ApidogSettings:
         setattr(self, attr, val)
         return val
 
-    def get_output_dir(self):
+    def get_output_dir(self) -> str:
         """Get the output directory, creating it if necessary."""
         output_dir = self.OUTPUT_DIR
 
@@ -120,9 +121,13 @@ class ApidogSettings:
             else:
                 output_dir = os.path.join(base_dir, "apidog")
 
-        return output_dir
+        return cast(str, output_dir)
 
-    def get_credentials(self, project_id=None, token=None):
+    def get_credentials(
+        self,
+        project_id: Optional[str] = None,
+        token: Optional[str] = None,
+    ) -> Tuple[Optional[str], Optional[str]]:
         """
         Get APIDOG credentials, with command-line overrides.
 
@@ -137,7 +142,7 @@ class ApidogSettings:
         tok = token or self.TOKEN
         return pid, tok
 
-    def reload(self):
+    def reload(self) -> None:
         """Reload settings (useful for testing)."""
         for attr in self._cached_attrs:
             try:

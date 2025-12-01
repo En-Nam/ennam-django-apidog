@@ -10,7 +10,7 @@ class ApidogConfig(AppConfig):
     verbose_name = "APIDOG Integration"
     default_auto_field = "django.db.models.BigAutoField"
 
-    def ready(self):
+    def ready(self) -> None:
         """Perform initialization when the app is ready."""
         # Import settings to validate configuration on startup
         pass

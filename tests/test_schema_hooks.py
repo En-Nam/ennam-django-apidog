@@ -1,8 +1,4 @@
-"""
-Tests for schema hooks.
-"""
-
-import pytest
+"""Tests for schema hooks."""
 
 
 class TestBaseSerializerExtension:
@@ -18,8 +14,9 @@ class TestBaseSerializerExtension:
 
     def test_map_serializer_returns_object_schema(self):
         """Test that map_serializer returns valid object schema."""
-        from ennam_django_apidog.schema_hooks import BaseSerializerExtension
         from rest_framework import serializers
+
+        from ennam_django_apidog.schema_hooks import BaseSerializerExtension
 
         class TestSerializer(serializers.BaseSerializer):
             def to_representation(self, instance):

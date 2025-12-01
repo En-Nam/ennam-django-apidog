@@ -2,7 +2,6 @@
 Tests for settings module.
 """
 
-import os
 
 import pytest
 
