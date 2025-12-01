@@ -134,3 +134,18 @@ Thumbs.db
 apidog/openapi_schema_*.json
 apidog/openapi_from_apidog_*.json
 apidog/apidog_environments.json
+
+# APIDOG integration test files
+test_apidog_real.py
+apidog_pulled_schema.json
+
+# IDE/Editor
+.claude/
+*.bak
+*.swp~
+*~.swp
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.egg-info/

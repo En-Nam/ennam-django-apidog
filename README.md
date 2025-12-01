@@ -262,11 +262,11 @@ For full documentation, see [docs/GUIDE.md](docs/GUIDE.md).
 ### Running Tests
 
 ```bash
-# Run all tests
-pytest
+# Install test dependencies first
+pip install -e ".[dev]"
 
-# Run with coverage report
-pytest --cov=src --cov-report=html --cov-report=term
+# Run all tests with coverage
+pytest --cov=src --cov-report=term
 
 # Run specific test file
 pytest tests/test_commands.py -v
@@ -274,17 +274,38 @@ pytest tests/test_commands.py -v
 # Run specific test
 pytest tests/test_commands.py::TestApidogCommand::test_export_command -v
 
-# Run tests with markers
-pytest -m integration    # Integration tests only
+# Run only HTTP mocking tests
+pytest tests/test_commands_http.py -v
+
+# Run only edge case tests
+pytest tests/test_commands_errors.py -v
+
+# Generate HTML coverage report
+pytest --cov=src --cov-report=html
+# Open htmlcov/index.html to view coverage
 ```
 
 ### Test Coverage
 
 Current coverage: **40-50%** focusing on critical functionality:
-- ✅ HTTP API interactions (push/pull/compare with mocked responses)
-- ✅ Management commands (export/validate/init)
-- ✅ Settings and credential handling
-- ✅ Error handling and edge cases
+
+**HTTP Mocking Tests** (14 tests):
+- ✅ Push schema to APIDOG (success, auth, timeout, no credentials)
+- ✅ Pull schema from APIDOG (success, auth, 404, 500 errors)
+- ✅ Compare local vs cloud schemas
+
+**Edge Case Tests** (17 tests):
+- ✅ Export command: directory creation, formats, indentation
+- ✅ Validate command: invalid JSON, missing fields
+- ✅ Init command: setup, gitignore, readme, overwrite
+- ✅ Environment configuration
+
+**Settings & Credentials Tests** (7 tests):
+- ✅ Configuration hierarchy (settings → env → defaults)
+- ✅ Credential resolution with overrides
+- ✅ Settings reload and caching
+
+All tests use HTTP mocking via `responses` library - no real API calls during testing.
 
 ### Development Setup
 

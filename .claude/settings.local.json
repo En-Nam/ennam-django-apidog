@@ -6,7 +6,10 @@
       "Bash(mypy:*)",
       "Bash(python -m mypy:*)",
       "Bash(python -m ruff check:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(python test_apidog_real.py:*)",
+      "Bash(PYTHONIOENCODING=utf-8 python:*)"
     ],
     "deny": [],
     "ask": []

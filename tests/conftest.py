@@ -1,6 +1,4 @@
-"""
-Pytest configuration and fixtures.
-"""
+"""Pytest configuration and fixtures."""
 
 import os
 import shutil
@@ -12,14 +10,20 @@ from django.conf import settings
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_django():
+def setup_django() -> None:
     """Setup Django for testing."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
-    django.setup()
+    if not settings.configured:
+        django.setup()
+
+
+def pytest_configure(config: object) -> None:
+    """Configure pytest without triggering django fixtures for non-django tests."""
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.settings")
 
 
 @pytest.fixture
-def temp_output_dir():
+def temp_output_dir() -> str:
     """Create a temporary output directory for tests."""
     temp_dir = tempfile.mkdtemp()
     yield temp_dir
@@ -27,7 +31,7 @@ def temp_output_dir():
 
 
 @pytest.fixture
-def mock_apidog_settings(temp_output_dir, monkeypatch):
+def mock_apidog_settings(temp_output_dir: str, monkeypatch: pytest.MonkeyPatch) -> dict:
     """Mock APIDOG settings for testing."""
     test_settings = {
         "OUTPUT_DIR": temp_output_dir,
