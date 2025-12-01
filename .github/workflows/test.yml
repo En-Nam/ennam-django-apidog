@@ -76,4 +76,5 @@ jobs:
       run: ruff check src/
 
     - name: Run mypy
-      run: mypy src/
+      run: mypy src/ --strict
+      continue-on-error: false
