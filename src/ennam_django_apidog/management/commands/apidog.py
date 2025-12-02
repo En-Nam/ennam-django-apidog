@@ -324,7 +324,7 @@ python manage.py apidog compare
 
 See the full documentation at: https://github.com/ennam/ennam-django-apidog
 """
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(content)
 
     # =========================================================================
