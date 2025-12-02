@@ -149,3 +149,6 @@ apidog_pulled_schema.json
 .DS_Store
 Thumbs.db
 *.egg-info/
+
+# Test Django Project
+test_django_project/
