@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ennam-django-apidog"
-version = "0.1.2"
+version = "0.1.3"
 description = "Django integration for APIDOG - Export, sync, and manage OpenAPI schemas"
 readme = "README.md"
 license = "MIT"
