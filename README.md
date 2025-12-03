@@ -62,7 +62,7 @@ python manage.py apidog env-config
 
 ## Configuration
 
-### Using Environment Variables
+### Using Environment Variables (Recommended)
 
 Instead of hardcoding credentials in settings, use environment variables:
 
@@ -76,11 +76,26 @@ APIDOG_SETTINGS = {
 }
 ```
 
-Then set environment variables:
+Then set environment variables in your shell **before** running commands:
+
 ```bash
+# Linux/macOS
 export APIDOG_PROJECT_ID=1133189
 export APIDOG_TOKEN=your-token
+python manage.py apidog push
+
+# Windows PowerShell
+[Environment]::SetEnvironmentVariable("APIDOG_PROJECT_ID", "1133189")
+[Environment]::SetEnvironmentVariable("APIDOG_TOKEN", "your-token")
+python manage.py apidog push
+
+# Windows CMD
+set APIDOG_PROJECT_ID=1133189
+set APIDOG_TOKEN=your-token
+python manage.py apidog push
 ```
+
+**Important**: Environment variables must be set **in the same shell session** before running the command. Python scripts cannot persist environment variables to the parent shell. See [ENVIRONMENT_VARIABLES_FIX.md](./ENVIRONMENT_VARIABLES_FIX.md) for detailed explanation.
 
 ## Development
 
