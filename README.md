@@ -197,4 +197,6 @@ MIT License - See LICENSE file for details
 
 ## Support
 
-For issues, questions, or contributions, please visit the repository or documentation.
+For issues, questions, or contributions, please contact:
+- Email: danny.tranhoang@ennam.vn
+- Package: https://pypi.org/project/ennam-django-apidog/

@@ -9,10 +9,10 @@ description = "Django integration for APIDOG - Export, sync, and manage OpenAPI 
 readme = "README.md"
 license = "MIT"
 authors = [
-    {name = "Ennam", email = "ennam@example.com"}
+    {name = "Ennam", email = "danny.tranhoang@ennam.vn"}
 ]
 maintainers = [
-    {name = "Ennam", email = "ennam@example.com"}
+    {name = "Ennam", email = "danny.tranhoang@ennam.vn"}
 ]
 requires-python = ">=3.8"
 keywords = ["django", "apidog", "openapi", "swagger", "drf", "rest", "api", "documentation"]
